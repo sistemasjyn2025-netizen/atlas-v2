@@ -4,7 +4,7 @@ services:
     env: node
     plan: free
     rootDir: .
-    buildCommand: pnpm install --prod=false && pnpm run build --filter=@atlas/api
+    buildCommand: pnpm install --prod=false && export DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" && pnpm run build --filter=@atlas/api
     startCommand: node apps/atlas-api/dist/index.js
     envVars:
       - key: PNPM_VERSION

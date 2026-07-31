@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "prisma generate --schema=./prisma/schema.prisma && tsc -b",
+    "build": "prisma generate --schema=./prisma/schema.prisma && tsc",
     "test": "jest",
     "clean": "rm -rf dist",
     "db:generate": "prisma generate --schema=./prisma/schema.prisma",

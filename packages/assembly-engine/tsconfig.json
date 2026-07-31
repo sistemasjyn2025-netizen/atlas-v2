@@ -5,9 +5,5 @@
     "rootDir": "./src"
   },
   "include": ["src/**/*"],
-  "references": [
-    { "path": "../atlas-types" },
-    { "path": "../atlas-kernel" },
-    { "path": "../spatial-engine" }
-  ]
+  
 }

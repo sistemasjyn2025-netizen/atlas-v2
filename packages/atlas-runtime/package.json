@@ -13,7 +13,7 @@
     }
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc",
     "test": "jest",
     "clean": "rm -rf dist"
   },
