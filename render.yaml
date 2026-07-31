@@ -3,9 +3,9 @@ services:
     name: atlas-api
     env: node
     plan: free
-    rootDir: apps/atlas-api
-    buildCommand: pnpm install && pnpm run build
-    startCommand: node dist/index.js
+    rootDir: .
+    buildCommand: pnpm install && pnpm run build --filter=@atlas/api
+    startCommand: node apps/atlas-api/dist/index.js
     envVars:
       - key: PNPM_VERSION
         value: 9.0.0
