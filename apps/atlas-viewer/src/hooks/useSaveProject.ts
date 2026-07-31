@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { useAuth } from '@clerk/clerk-react';
+import { saveProject as apiSaveProject } from '../services/api';
 
 interface SaveProjectData {
   id?: string;
   name: string;
   description?: string;
   inputData: any;
+  entities?: any[];
 }
 
 export function useSaveProject() {
@@ -21,21 +23,8 @@ export function useSaveProject() {
 
     try {
       const token = await getToken();
-
-      const response = await fetch('/api/projects', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(data)
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: al guardar el proyecto`);
-      }
-
-      const result = await response.json();
+      
+      const result = await apiSaveProject(data, token);
       
       // Silent Routing: actualizamos la URL sin recargar la página
       if (result.projectId) {
@@ -43,13 +32,17 @@ export function useSaveProject() {
         window.history.replaceState(null, '', newUrl);
       }
 
-      toast.success('Proyecto guardado exitosamente');
+      toast.success('Proyecto guardado exitosamente', {
+        description: `El proyecto ${data.name} se ha guardado en la base de datos.`
+      });
       return result.projectId;
 
     } catch (err: any) {
       console.error('Error in saveProject:', err);
       setError(err);
-      toast.error('Error al guardar el proyecto');
+      toast.error('Error al guardar el proyecto', {
+        description: err.message || 'Ha ocurrido un error inesperado'
+      });
       throw err;
     } finally {
       setIsLoading(false);

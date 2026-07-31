@@ -4,6 +4,7 @@ import { WizardBackground } from './WizardBackground';
 import { CatalogProvider } from './CatalogContext';
 import { Clock, MapPin, Target, FolderOpen } from 'lucide-react';
 import { SignedIn, SignedOut, SignInButton, UserButton, useAuth } from '@clerk/clerk-react';
+import { getProjects } from '../../services/api';
 
 interface RecentProject {
   id: string;
@@ -25,21 +26,17 @@ export const StartScreen: React.FC<{ onProjectCreated: (data: any) => void }> = 
         const token = await getToken();
         if (!token) return;
 
-        const res = await fetch('/api/projects', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setRecentProjects(data.map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            location: 'Supabase Cloud',
-            date: new Date(p.updatedAt).toLocaleDateString(),
-            rulePack: 'ATLAS Standard'
-          })));
-        }
+        const data = await getProjects(token);
+        
+        setRecentProjects(data.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          location: 'Supabase Cloud',
+          date: new Date(p.updatedAt).toLocaleDateString(),
+          rulePack: 'ATLAS Standard'
+        })));
       } catch (e) {
-        console.error(e);
+        console.error('Error al traer los proyectos:', e);
       }
     }
     fetchProjects();

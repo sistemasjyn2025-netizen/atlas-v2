@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, OrthographicCamera, Grid, Environment, ContactShadows, GizmoHelper, GizmoViewport } from '@react-three/drei';
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from 'sonner';
 import * as THREE from 'three';
 import { useAuth } from '@clerk/clerk-react';
 import { DataLoader } from './utils/DataLoader';
+import { loadProject } from './services/api';
 import type { SelectionMapping } from '@atlas/renderer-core';
 import type { PipelineResult } from '@atlas/runtime';
 import { AtlasPipeline } from '@atlas/runtime';
@@ -69,12 +70,7 @@ export default function App() {
         const token = await getToken();
         if (!token) throw new Error("No estás logueado.");
 
-        const res = await fetch(`/api/projects/${action.projectId}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error("No se pudo cargar el proyecto.");
-
-        const data = await res.json();
+        const data = await loadProject(action.projectId, token);
 
         // Formatear los datos guardados para el motor de la misma forma que GenerationScreen
         const wizardData = data.inputData;
@@ -215,7 +211,7 @@ export default function App() {
                 </div>
               )}
 
-              <Toaster position="bottom-right" toastOptions={{ style: { background: '#161b22', color: '#c9d1d9', border: '1px solid #30363d' } }} />
+              <Toaster position="bottom-right" theme="dark" richColors />
 
               <Workspace viewportComponent={viewportComponent} demoMode={demoMode} />
 

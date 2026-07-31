@@ -55,7 +55,8 @@ export const Ribbon = () => {
     await executeSave({
       id: currentId,
       name: projectInput.projectName || 'Industrial Warehouse',
-      inputData: projectInput
+      inputData: projectInput,
+      entities: entities
     });
   };
 
