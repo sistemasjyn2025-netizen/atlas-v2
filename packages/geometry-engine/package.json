@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "scripts": { "build": "tsc", "test": "jest" },
+  "scripts": { "build": "tsc -b", "test": "jest" },
   "dependencies": {
     "@atlas/geometry-core": "workspace:*",
     "@atlas/spatial-engine": "workspace:*"
