@@ -2,6 +2,7 @@ services:
   - type: web
     name: atlas-api
     env: node
+    plan: free
     rootDir: apps/atlas-api
     buildCommand: pnpm install && pnpm run build
     startCommand: node dist/index.js
