@@ -1,0 +1,407 @@
+/* ============================================================================
+   ATLAS Design System — Tokens
+   ============================================================================
+   Professional engineering-grade design token system.
+   Dark theme is the default (:root). Light theme activates via html.light.
+   All UI components consume these tokens exclusively — never raw values.
+   ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Dark Theme (Default)
+   ────────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Primitive Colors ─────────────────────────────────────────────────────── */
+
+  /* Backgrounds — darkest to lightest */
+  --color-gray-0:  #010409;
+  --color-gray-1:  #0d1117;
+  --color-gray-2:  #161b22;
+  --color-gray-3:  #1c2128;
+  --color-gray-4:  #21262d;
+  --color-gray-5:  #282e36;
+  --color-gray-6:  #30363d;
+  --color-gray-7:  #3d444d;
+  --color-gray-8:  #484f58;
+  --color-gray-9:  #6e7681;
+
+  /* Foreground / Text */
+  --color-text-white:     #f0f6fc;
+  --color-text-primary:   #e6edf3;
+  --color-text-secondary: #8b949e;
+  --color-text-muted:     #6e7681;
+  --color-text-disabled:  #484f58;
+  --color-text-link:      #58a6ff;
+
+  /* Accent — Engineering Blue */
+  --color-accent-subtle:  rgba(47, 129, 247, 0.10);
+  --color-accent-muted:   rgba(47, 129, 247, 0.25);
+  --color-accent-default: #2f81f7;
+  --color-accent-hover:   #388bfd;
+  --color-accent-active:  #58a6ff;
+  --color-accent-text:    #58a6ff;
+
+  /* Success — Green */
+  --color-success-subtle:  rgba(63, 185, 80, 0.10);
+  --color-success-muted:   rgba(63, 185, 80, 0.25);
+  --color-success-default: #3fb950;
+  --color-success-hover:   #56d364;
+  --color-success-text:    #56d364;
+
+  /* Warning — Amber */
+  --color-warning-subtle:  rgba(210, 153, 34, 0.10);
+  --color-warning-muted:   rgba(210, 153, 34, 0.25);
+  --color-warning-default: #d29922;
+  --color-warning-hover:   #e3b341;
+  --color-warning-text:    #e3b341;
+
+  /* Error / Danger — Red */
+  --color-error-subtle:  rgba(248, 81, 73, 0.10);
+  --color-error-muted:   rgba(248, 81, 73, 0.25);
+  --color-error-default: #f85149;
+  --color-error-hover:   #ff7b72;
+  --color-error-text:    #ff7b72;
+
+  /* Info — Light Blue */
+  --color-info-subtle:  rgba(88, 166, 255, 0.10);
+  --color-info-muted:   rgba(88, 166, 255, 0.25);
+  --color-info-default: #58a6ff;
+  --color-info-hover:   #79c0ff;
+  --color-info-text:    #79c0ff;
+
+  /* ── Semantic Surface Tokens ──────────────────────────────────────────────── */
+  --surface-ground:    var(--color-gray-0);
+  --surface-primary:   var(--color-gray-1);
+  --surface-secondary: var(--color-gray-2);
+  --surface-tertiary:  var(--color-gray-3);
+  --surface-elevated:  var(--color-gray-4);
+  --surface-overlay:   rgba(1, 4, 9, 0.70);
+  --surface-inset:     var(--color-gray-0);
+  --surface-hover:     var(--color-gray-3);
+  --surface-active:    var(--color-gray-4);
+  --surface-selected:  var(--color-accent-subtle);
+
+  /* ── Semantic Border Tokens ───────────────────────────────────────────────── */
+  --border-default:  var(--color-gray-6);
+  --border-subtle:   var(--color-gray-4);
+  --border-strong:   var(--color-gray-7);
+  --border-accent:   var(--color-accent-default);
+  --border-success:  var(--color-success-default);
+  --border-warning:  var(--color-warning-default);
+  --border-danger:   var(--color-error-default);
+
+  /* ── Semantic Text Tokens ─────────────────────────────────────────────────── */
+  --text-primary:   var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted:     var(--color-text-muted);
+  --text-disabled:  var(--color-text-disabled);
+  --text-link:      var(--color-text-link);
+  --text-on-accent: #ffffff;
+
+  /* ── Semantic Intent Tokens ───────────────────────────────────────────────── */
+  --accent-primary: var(--color-accent-default);
+  --accent-hover:   var(--color-accent-hover);
+  --accent-active:  var(--color-accent-active);
+
+  --success: var(--color-success-default);
+  --warning: var(--color-warning-default);
+  --danger:  var(--color-error-default);
+  --error:   var(--color-error-default);
+  --info:    var(--color-info-default);
+
+  /* ── Typography ───────────────────────────────────────────────────────────── */
+  --font-family-sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                       Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+  --font-family-mono:  'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono',
+                       Consolas, 'Liberation Mono', Menlo, monospace;
+
+  /* Font sizes */
+  --font-size-2xs:  10px;
+  --font-size-xs:   11px;
+  --font-size-sm:   12px;
+  --font-size-md:   13px;
+  --font-size-base: 14px;
+  --font-size-lg:   16px;
+  --font-size-xl:   18px;
+  --font-size-2xl:  20px;
+  --font-size-3xl:  24px;
+
+  /* Line heights */
+  --line-height-tight:  1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
+
+  /* Font weights */
+  --font-weight-normal:   400;
+  --font-weight-medium:   500;
+  --font-weight-semibold: 600;
+  --font-weight-bold:     700;
+
+  /* Letter spacing */
+  --letter-spacing-tight:  -0.01em;
+  --letter-spacing-normal:  0;
+  --letter-spacing-wide:    0.02em;
+  --letter-spacing-wider:   0.04em;
+
+  /* ── Spacing (4px base grid) ──────────────────────────────────────────────── */
+  --space-0:   0;
+  --space-0-5: 2px;
+  --space-1:   4px;
+  --space-1-5: 6px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-12:  48px;
+  --space-16:  64px;
+
+  /* ── Border Radius ────────────────────────────────────────────────────────── */
+  --radius-xs:   2px;
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-xl:   12px;
+  --radius-full: 9999px;
+
+  /* ── Shadows ──────────────────────────────────────────────────────────────── */
+  --shadow-subtle:
+    0 1px 2px rgba(0, 0, 0, 0.30);
+  --shadow-medium:
+    0 2px 6px rgba(0, 0, 0, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-large:
+    0 4px 12px rgba(0, 0, 0, 0.40),
+    0 2px 4px  rgba(0, 0, 0, 0.30);
+  --shadow-overlay:
+    0 8px 24px rgba(0, 0, 0, 0.50),
+    0 4px 8px  rgba(0, 0, 0, 0.35);
+  --shadow-inset:
+    inset 0 1px 3px rgba(0, 0, 0, 0.30);
+  --shadow-focus:
+    0 0 0 2px var(--surface-primary),
+    0 0 0 4px var(--color-accent-default);
+
+  /* ── Transitions ──────────────────────────────────────────────────────────── */
+  --transition-fast:   100ms ease-out;
+  --transition-normal: 200ms ease-out;
+  --transition-slow:   300ms ease-out;
+
+  --duration-fast:   100ms;
+  --duration-normal: 200ms;
+  --duration-slow:   300ms;
+
+  --ease-default: ease-out;
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth:  cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Z-Index Layers ───────────────────────────────────────────────────────── */
+  --z-ground:   0;
+  --z-default:  1;
+  --z-sticky:   100;
+  --z-panel:    200;
+  --z-dropdown: 300;
+  --z-overlay:  400;
+  --z-modal:    500;
+  --z-toast:    600;
+  --z-tooltip:  700;
+  --z-max:      9999;
+
+  /* ── Scrollbar ────────────────────────────────────────────────────────────── */
+  --scrollbar-width:       8px;
+  --scrollbar-track:       transparent;
+  --scrollbar-thumb:       var(--color-gray-6);
+  --scrollbar-thumb-hover: var(--color-gray-7);
+
+  /* ── Miscellaneous ────────────────────────────────────────────────────────── */
+  --focus-ring:         var(--shadow-focus);
+  --header-height:      40px;
+  --sidebar-width:      48px;
+  --sidebar-width-open: 260px;
+  --statusbar-height:   24px;
+  --panel-min-width:    200px;
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Light Theme
+   ────────────────────────────────────────────────────────────────────────────── */
+
+html.light {
+  /* ── Primitive Colors ─────────────────────────────────────────────────────── */
+
+  /* Backgrounds — lightest to darkest */
+  --color-gray-0:  #ffffff;
+  --color-gray-1:  #ffffff;
+  --color-gray-2:  #f6f8fa;
+  --color-gray-3:  #eaeef2;
+  --color-gray-4:  #d8dee4;
+  --color-gray-5:  #d0d7de;
+  --color-gray-6:  #d0d7de;
+  --color-gray-7:  #afb8c1;
+  --color-gray-8:  #8c959f;
+  --color-gray-9:  #6e7781;
+
+  /* Foreground / Text */
+  --color-text-white:     #ffffff;
+  --color-text-primary:   #1f2328;
+  --color-text-secondary: #656d76;
+  --color-text-muted:     #6e7781;
+  --color-text-disabled:  #8c959f;
+  --color-text-link:      #0969da;
+
+  /* Accent — Engineering Blue */
+  --color-accent-subtle:  rgba(9, 105, 218, 0.08);
+  --color-accent-muted:   rgba(9, 105, 218, 0.20);
+  --color-accent-default: #0969da;
+  --color-accent-hover:   #0860ca;
+  --color-accent-active:  #0550ae;
+  --color-accent-text:    #0969da;
+
+  /* Success — Green */
+  --color-success-subtle:  rgba(26, 127, 55, 0.08);
+  --color-success-muted:   rgba(26, 127, 55, 0.20);
+  --color-success-default: #1a7f37;
+  --color-success-hover:   #1a6c30;
+  --color-success-text:    #1a7f37;
+
+  /* Warning — Amber */
+  --color-warning-subtle:  rgba(155, 108, 0, 0.08);
+  --color-warning-muted:   rgba(155, 108, 0, 0.20);
+  --color-warning-default: #9b6c00;
+  --color-warning-hover:   #845d00;
+  --color-warning-text:    #9b6c00;
+
+  /* Error / Danger — Red */
+  --color-error-subtle:  rgba(207, 34, 46, 0.08);
+  --color-error-muted:   rgba(207, 34, 46, 0.20);
+  --color-error-default: #cf222e;
+  --color-error-hover:   #b61c27;
+  --color-error-text:    #cf222e;
+
+  /* Info — Blue */
+  --color-info-subtle:  rgba(9, 105, 218, 0.08);
+  --color-info-muted:   rgba(9, 105, 218, 0.20);
+  --color-info-default: #0969da;
+  --color-info-hover:   #0860ca;
+  --color-info-text:    #0969da;
+
+  /* ── Semantic Surfaces ────────────────────────────────────────────────────── */
+  --surface-overlay: rgba(31, 35, 40, 0.50);
+  --surface-inset:   var(--color-gray-2);
+
+  /* ── Shadows ──────────────────────────────────────────────────────────────── */
+  --shadow-subtle:
+    0 1px 2px rgba(31, 35, 40, 0.08);
+  --shadow-medium:
+    0 2px 6px rgba(31, 35, 40, 0.12),
+    0 1px 2px rgba(31, 35, 40, 0.06);
+  --shadow-large:
+    0 4px 12px rgba(31, 35, 40, 0.15),
+    0 2px 4px  rgba(31, 35, 40, 0.08);
+  --shadow-overlay:
+    0 8px 24px rgba(31, 35, 40, 0.20),
+    0 4px 8px  rgba(31, 35, 40, 0.10);
+  --shadow-inset:
+    inset 0 1px 3px rgba(31, 35, 40, 0.08);
+  --shadow-focus:
+    0 0 0 2px var(--surface-primary),
+    0 0 0 4px var(--color-accent-default);
+
+  /* ── Scrollbar ────────────────────────────────────────────────────────────── */
+  --scrollbar-thumb:       var(--color-gray-5);
+  --scrollbar-thumb-hover: var(--color-gray-7);
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   Global Reset & Base Styles
+   ────────────────────────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  color: var(--text-primary);
+  background-color: var(--surface-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Scrollbar Styling ──────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* ── Selection ──────────────────────────────────────────────────────────────── */
+
+::selection {
+  background: var(--color-accent-muted);
+  color: var(--text-primary);
+}
+
+/* ── Focus Visible ──────────────────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ── Utilities ──────────────────────────────────────────────────────────────── */
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+

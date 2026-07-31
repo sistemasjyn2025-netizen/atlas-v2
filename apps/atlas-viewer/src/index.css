@@ -1,0 +1,68 @@
+@import "flexlayout-react/style/dark.css";
+@import "./design-system/tokens.css";
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--surface-primary);
+  color: var(--text-primary);
+  font-family: var(--font-family-sans);
+}
+
+.atlas-app-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface-primary);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.atlas-error-banner {
+  background: var(--surface-overlay);
+  border-bottom: 1px solid var(--border-danger);
+  color: var(--color-error-text);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-family-mono);
+  z-index: var(--z-sticky);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Customizing flexlayout colors using Design Tokens */
+.flexlayout__layout {
+  background-color: var(--surface-primary);
+}
+
+.flexlayout__tabset {
+  background-color: var(--surface-secondary);
+}
+
+.flexlayout__tabset_header {
+  background-color: var(--surface-tertiary);
+}
+
+.flexlayout__tab_button {
+  background-color: var(--surface-tertiary);
+  color: var(--text-secondary);
+}
+
+.flexlayout__tab_button--selected {
+  background-color: var(--surface-primary);
+  color: var(--text-primary);
+}
+
+.flexlayout__splitter {
+  background-color: var(--surface-primary);
+}
+.flexlayout__splitter:hover {
+  background-color: var(--accent-hover);
+}
+

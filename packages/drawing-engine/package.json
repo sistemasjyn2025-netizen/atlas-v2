@@ -1,0 +1,20 @@
+{
+  "name": "@atlas/drawing-engine",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@atlas/runtime": "workspace:*",
+    "@atlas/types": "workspace:*",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/uuid": "^9.0.0"
+  }
+}

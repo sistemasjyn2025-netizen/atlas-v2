@@ -1,0 +1,58 @@
+.command-palette-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--surface-overlay);
+  z-index: var(--z-modal);
+  display: flex;
+  justify-content: center;
+  padding-top: 100px;
+}
+
+.command-palette-modal {
+  width: 600px;
+  background: rgba(33, 38, 45, 0.65); /* surface-elevated with transparency */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+}
+
+.command-palette-input {
+  background: var(--surface-tertiary);
+  border: none;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-base);
+  outline: none;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.command-palette-input:focus {
+  box-shadow: none; /* keep it clean, maybe just a border if needed */
+}
+
+.command-palette-list {
+  overflow-y: auto;
+  padding: var(--space-2) 0;
+}
+
+.command-palette-item {
+  padding: var(--space-2) var(--space-4);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: var(--font-size-md);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.command-palette-item:hover {
+  background: var(--surface-selected);
+  color: var(--text-primary);
+}

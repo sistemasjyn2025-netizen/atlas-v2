@@ -1,0 +1,22 @@
+.drawing-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #0d1117; 
+  cursor: grab;
+  touch-action: none; /* Crucial para evitar comportamientos móviles del navegador al hacer pan */
+}
+
+.drawing-viewport:active {
+  cursor: grabbing;
+}
+
+.drawing-hardware-layer {
+  pointer-events: none; /* Clicks se manejan en el viewport */
+}
+
+.drawing-hardware-layer svg {
+  box-shadow: 0 0 20px rgba(0,0,0,0.5); 
+  background: white; 
+}

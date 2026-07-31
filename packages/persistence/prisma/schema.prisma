@@ -1,0 +1,187 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── USUARIOS Y SAAS ────────────────────────────────────────────────────────
+
+model User {
+  id        String    @id // Mapea directamente al userId de Clerk/Auth0
+  email     String    @unique
+  name      String?
+  createdAt DateTime  @default(now())
+  
+  projects  Project[]
+
+  @@map("users")
+}
+
+// ─── CORE PROJECT ────────────────────────────────────────────────────────────
+
+model Project {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  description String?
+  
+  // El DTO inmutable que alimenta todo el motor ATLASv2 (ProjectInput)
+  inputData   Json     @db.JsonB
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  snapshots   QuoteSnapshot[]
+  revisions   ProjectRevision[]
+  auditLogs   AuditLog[]
+
+  @@index([userId])
+  @@map("projects")
+}
+
+// ─── QUOTES & HISTÓRICOS ─────────────────────────────────────────────────────
+
+model QuoteSnapshot {
+  id           String   @id @default(uuid())
+  projectId    String
+  
+  totalCost    Float
+  materialCost Float
+  laborCost    Float
+  
+  // Snapshot exacto de los datos en ese instante
+  quoteData    Json     @db.JsonB
+  
+  createdAt    DateTime @default(now())
+
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@map("quote_snapshots")
+}
+
+model ProjectRevision {
+  id                  String             @id @default(uuid())
+  projectId           String
+  revisionNumber      Int
+  description         String?
+  sourceProjectState  Json               @db.JsonB
+  createdAt           DateTime           @default(now())
+
+  project             Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  structuralEntities  StructuralEntity[]
+  manufacturingParts  ManufacturingPart[]
+  documents           Document[]
+  quotes              Quote[]
+
+  @@unique([projectId, revisionNumber])
+  @@map("project_revisions")
+}
+
+// ─── STRUCTURAL ENTITIES (EntityGraph) ───────────────────────────────────────
+
+model StructuralEntity {
+  id         String          @id @default(uuid())
+  projectId  String
+  revisionId String
+  parentId   String?
+  type       String          
+  properties Json            @db.JsonB
+  createdAt  DateTime        @default(now())
+
+  revision   ProjectRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  parent     StructuralEntity?  @relation("EntityHierarchy", fields: [parentId], references: [id])
+  children   StructuralEntity[] @relation("EntityHierarchy")
+
+  @@index([projectId, revisionId])
+  @@index([parentId])
+  @@index([type])
+  @@map("structural_entities")
+}
+
+// ─── MANUFACTURING ────────────────────────────────────────────────────────────
+
+model ManufacturingPart {
+  id                String          @id @default(uuid())
+  projectId         String
+  revisionId        String
+  name              String
+  profile           String
+  materialRef       String
+  length            Float
+  quantity          Int
+  operations        Json            @db.JsonB
+  sourceEntityIds   String[]        
+  sourceAssemblyIds String[]        
+  properties        Json?           @db.JsonB
+
+  revision          ProjectRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, revisionId])
+  @@index([profile])
+  @@map("manufacturing_parts")
+}
+
+// ─── DOCUMENTS ────────────────────────────────────────────────────────────────
+
+model Document {
+  id                   String          @id @default(uuid())
+  projectId            String
+  revisionId           String
+  documentType         String          
+  revisionNumber       Int
+  createdAt            DateTime        @default(now())
+  sourceProjectVersion Int
+  sheets               Json            @db.JsonB
+  referencedEntityIds  String[]        
+
+  revision             ProjectRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, revisionId])
+  @@index([documentType])
+  @@map("documents")
+}
+
+// ─── COST / QUOTES ────────────────────────────────────────────────────────────
+
+model Quote {
+  id                  String          @id @default(uuid())
+  projectId           String
+  revisionId          String
+  createdAt           DateTime        @default(now())
+  materialCosts       Json            @db.JsonB
+  operationCosts      Json            @db.JsonB
+  laborCosts          Json            @db.JsonB
+  totalMaterialCost   Float
+  totalOperationCost  Float
+  totalLaborCost      Float
+  totalCost           Float
+
+  revision            ProjectRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, revisionId])
+  @@map("quotes")
+}
+
+// ─── AUDIT LOG ────────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  projectId String
+  action    String   
+  payload   Json?    @db.JsonB
+  timestamp DateTime @default(now())
+
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([action])
+  @@map("audit_logs")
+}
