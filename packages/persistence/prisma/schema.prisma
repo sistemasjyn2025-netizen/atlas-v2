@@ -13,12 +13,15 @@ datasource db {
 // ─── USUARIOS Y SAAS ────────────────────────────────────────────────────────
 
 model User {
-  id        String    @id // Mapea directamente al userId de Clerk/Auth0
-  email     String    @unique
-  name      String?
-  createdAt DateTime  @default(now())
+  id             String    @id // Mapea directamente al userId de Clerk/Auth0
+  email          String    @unique
+  name           String?
+  companyName    String?
+  companyLogoUrl String?
+  contactInfo    String?
+  createdAt      DateTime  @default(now())
   
-  projects  Project[]
+  projects       Project[]
 
   @@map("users")
 }
@@ -33,6 +36,9 @@ model Project {
   
   // El DTO inmutable que alimenta todo el motor ATLASv2 (ProjectInput)
   inputData   Json     @db.JsonB
+  
+  // Compartir proyecto (Solo lectura)
+  isPublic    Boolean  @default(false)
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

@@ -3,7 +3,7 @@ import { useProjectContext } from '../../contexts/ProjectContext';
 import { usePipelineContext } from '../../contexts/PipelineContext';
 import { useViewportContext } from '../../contexts/ViewportContext';
 import { useDeliverablesExport } from '../../hooks/useDeliverablesExport';
-import { Save, FileDown, Eye, Maximize, Grid3X3, Axis3d, Settings, Crosshair, Loader2 } from 'lucide-react';
+import { Save, FileDown, Eye, Maximize, Grid3X3, Axis3d, Settings, Crosshair, Loader2, Share2 } from 'lucide-react';
 import { Button } from '../../design-system/Button';
 import { useSaveProject } from '../../hooks/useSaveProject';
 import { useProjectStore } from '../../store/useProjectStore';
@@ -11,14 +11,18 @@ import { generateDXF } from '../../utils/dxfGenerator';
 import { generateBOM } from '../../utils/pdfGenerator';
 import './RibbonStatusBar.css';
 
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
+import { SignedIn, SignedOut, SignInButton, UserButton, useAuth } from '@clerk/clerk-react';
+import { shareProject } from '../../services/api';
+import { toast } from 'sonner';
 
 export const Ribbon = () => {
   const { projectInput } = useProjectContext();
   const { pipelineResult } = usePipelineContext();
   const { viewMode, setViewMode } = useViewportContext();
   const { exportPdf, isExporting } = useDeliverablesExport();
-  const { entities } = useProjectStore();
+  const { entities, cameraView, setCameraView, triggerCameraReset } = useProjectStore();
+  const { getToken } = useAuth();
+  const [isSharing, setIsSharing] = React.useState(false);
 
   const handleExportPDF = () => {
     if (!projectInput) return;
@@ -55,9 +59,32 @@ export const Ribbon = () => {
     await executeSave({
       id: currentId,
       name: projectInput.projectName || 'Industrial Warehouse',
-      inputData: projectInput,
-      entities: entities
+      inputData: { ...projectInput, entities }
     });
+  };
+
+  const handleShare = async () => {
+    const match = window.location.pathname.match(/\/projects\/([a-zA-Z0-9-]+)/);
+    const currentId = match ? match[1] : undefined;
+    
+    if (!currentId) {
+      toast.error('Primero debes guardar el proyecto.');
+      return;
+    }
+
+    setIsSharing(true);
+    try {
+      const token = await getToken();
+      await shareProject(currentId, token);
+      const shareUrl = `${window.location.origin}/view/${currentId}`;
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success('¡Enlace público copiado al portapapeles!');
+    } catch (e: any) {
+      console.error(e);
+      toast.error('Error al compartir el proyecto.');
+    } finally {
+      setIsSharing(false);
+    }
   };
 
   return (
@@ -99,19 +126,22 @@ export const Ribbon = () => {
         <Button variant="primary" size="sm" onClick={handleSave} disabled={isSaving} icon={isSaving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}>
           {isSaving ? 'Guardando...' : 'Guardar .atlas'}
         </Button>
+        <Button variant="secondary" size="sm" onClick={handleShare} disabled={isSharing || isSaving} icon={isSharing ? <Loader2 size={14} className="animate-spin" /> : <Share2 size={14} />}>
+          Compartir
+        </Button>
         <div className="atlas-ribbon-divider" />
         <Button variant="secondary" size="sm" onClick={handleExportPDF} icon={<FileDown size={14} />}>PDF</Button>
         <Button variant="secondary" size="sm" onClick={handleExportDXF} icon={<FileDown size={14} />}>DXF</Button>
         <div className="atlas-ribbon-divider" />
-        <Button variant={viewMode === 'top' ? 'primary' : 'secondary'} size="sm" onClick={() => setViewMode('top')} icon={<Eye size={14} />}>Superior</Button>
-        <Button variant={viewMode === 'front' ? 'primary' : 'secondary'} size="sm" onClick={() => setViewMode('front')} icon={<Eye size={14} />}>Frontal</Button>
-        <Button variant={viewMode === 'iso' ? 'primary' : 'secondary'} size="sm" onClick={() => setViewMode('iso')} icon={<Eye size={14} />}>Iso</Button>
+        <Button variant={cameraView === 'top' ? 'primary' : 'secondary'} size="sm" onClick={() => setCameraView('top')} icon={<Eye size={14} />}>Superior</Button>
+        <Button variant={cameraView === 'front' ? 'primary' : 'secondary'} size="sm" onClick={() => setCameraView('front')} icon={<Eye size={14} />}>Frontal</Button>
+        <Button variant={cameraView === 'iso' ? 'primary' : 'secondary'} size="sm" onClick={() => setCameraView('iso')} icon={<Eye size={14} />}>Iso</Button>
         <div className="atlas-ribbon-divider" />
         <Button variant="secondary" size="sm" onClick={() => onPlaceholder('Toggle Grid')} icon={<Grid3X3 size={14} />}>Rejilla</Button>
         <Button variant="secondary" size="sm" onClick={() => onPlaceholder('Toggle Axes')} icon={<Axis3d size={14} />}>Ejes</Button>
         <div className="atlas-ribbon-divider" />
         <Button variant="secondary" size="sm" onClick={() => onPlaceholder('Hardware LOD')} icon={<Settings size={14} />}>Nivel de Detalle</Button>
-        <Button variant="secondary" size="sm" onClick={() => onPlaceholder('Zoom Extents')} icon={<Crosshair size={14} />}>Centrar</Button>
+        <Button variant="secondary" size="sm" onClick={() => triggerCameraReset()} icon={<Crosshair size={14} />}>Centrar</Button>
       </div>
     </div>
   );

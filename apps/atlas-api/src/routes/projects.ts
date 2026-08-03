@@ -122,4 +122,51 @@ router.get('/:id', requireAuth(), async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * POST /api/projects/:id/share
+ * Hace público un proyecto (Solo el dueño puede hacerlo)
+ */
+router.post('/:id/share', requireAuth(), async (req: Request, res: Response) => {
+  try {
+    const { userId } = (req as any).auth;
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { id } = req.params;
+    const project = await prisma.project.findUnique({ where: { id } });
+
+    if (!project) return res.status(404).json({ error: 'Not found' });
+    if (project.userId !== userId) return res.status(403).json({ error: 'Forbidden' });
+
+    await prisma.project.update({
+      where: { id },
+      data: { isPublic: true }
+    });
+
+    return res.status(200).json({ success: true, message: 'Proyecto hecho público' });
+  } catch (error) {
+    console.error('Error sharing project:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+/**
+ * GET /api/projects/shared/:id
+ * Endpoint público para cargar proyectos compartidos
+ * SIN middleware de Clerk
+ */
+router.get('/shared/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const project = await prisma.project.findUnique({ where: { id } });
+
+    if (!project) return res.status(404).json({ error: 'Not found' });
+    if (!project.isPublic) return res.status(403).json({ error: 'This project is not public' });
+
+    return res.json(project);
+  } catch (error) {
+    console.error('Error fetching shared project:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 export default router;

@@ -44,7 +44,9 @@ app.get('/api/health', (req, res) => {
 });
 
 // 3. Montaje de Rutas Core
+import userRouter from './routes/user';
 app.use('/api/projects', projectsRouter);
+app.use('/api/user', userRouter);
 
 // 4. Manejo de Errores Global (Evita que el hilo de Node muera por un unhandled exception)
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

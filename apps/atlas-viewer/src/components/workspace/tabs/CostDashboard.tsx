@@ -1,20 +1,25 @@
 import React from 'react';
-import { usePipelineContext } from '../../../contexts/PipelineContext';
+import { useProjectStore } from '../../../store/useProjectStore';
 
 export const CostDashboard: React.FC = () => {
-  const { pipelineResult } = usePipelineContext();
-  const quote = pipelineResult?.quote;
+  const { entities, projectInput } = useProjectStore();
 
-  if (!quote) {
-    return <div style={{ padding: 20, color: '#8b949e', fontFamily: 'Inter' }}>No hay datos de costos disponibles.</div>;
-  }
+  const WEIGHT_FACTORS: Record<string, number> = { 'Column': 35, 'Beam': 35, 'Purlin': 5, 'Bracing': 2 };
+  let calcTotalWeight = 0;
+  entities.forEach((e: any) => {
+    const weightPerM = WEIGHT_FACTORS[e.type] || 10;
+    calcTotalWeight += (e.length / 1000) * weightPerM;
+  });
 
-  const matCost = quote.totalMaterialCost || 0;
-  const opCost = quote.totalOperationCost || 0;
-  const total = quote.grandTotal || 0;
+  const pricePerKg = projectInput.pricePerKg || 0;
+  
+  // Since we don't have pipeline quote, we mock the material vs operations split (80% / 20%)
+  const total = calcTotalWeight * pricePerKg;
+  const matCost = total * 0.8;
+  const opCost = total * 0.2;
 
-  const matPct = total > 0 ? (matCost / total) * 100 : 0;
-  const opPct = total > 0 ? (opCost / total) * 100 : 0;
+  const matPct = total > 0 ? 80 : 0;
+  const opPct = total > 0 ? 20 : 0;
 
   return (
     <div style={{ padding: 20, color: '#c9d1d9', fontFamily: 'Inter, sans-serif', height: '100%', overflowY: 'auto' }}>

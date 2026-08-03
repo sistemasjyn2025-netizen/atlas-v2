@@ -1,30 +1,47 @@
 import React, { useState, useMemo } from 'react';
-import { usePipelineContext } from '../../../contexts/PipelineContext';
+import { useProjectStore } from '../../../store/useProjectStore';
 
 export const BOMTable: React.FC = () => {
-  const { pipelineResult } = usePipelineContext();
+  const { entities } = useProjectStore();
   const [search, setSearch] = useState('');
   const [sortCol, setSortCol] = useState('profile');
   const [sortAsc, setSortAsc] = useState(true);
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
 
-  const parts = pipelineResult?.manufacturingParts || [];
-
   const data = useMemo(() => {
-    let filtered = parts.map(p => {
-      // Mock weight based on profile (kg/m)
-      let kgPerM = 30;
-      const prof = p.profile.toUpperCase();
-      if (prof.includes('HEB 200')) kgPerM = 61.3;
-      else if (prof.includes('HEB 300')) kgPerM = 117;
-      else if (prof.includes('IPE 200')) kgPerM = 22.4;
-      else if (prof.includes('IPE 300')) kgPerM = 42.2;
-      else if (prof.includes('IPE 400')) kgPerM = 66.3;
-      
-      const weight = (p.length / 1000) * kgPerM;
+    // Linear weights in kg/m based on profile types
+    const WEIGHT_FACTORS: Record<string, number> = {
+      'Column': 35,
+      'Beam': 35,
+      'Purlin': 5,
+      'Bracing': 2
+    };
+
+    const groups: Record<string, any> = {};
+    
+    entities.forEach((e: any) => {
+      const lenM = (e.length / 1000).toFixed(2);
+      const key = `${e.type}_${e.material}_${lenM}`;
+      if (!groups[key]) {
+        groups[key] = {
+          id: e.id,
+          profile: `${e.type} - ${e.material}`,
+          length: e.length,
+          quantity: 0,
+          operations: []
+        };
+      }
+      groups[key].quantity += 1;
+    });
+
+    let filtered = Object.values(groups).map(p => {
+      // Mock weight
+      const weightPerM = WEIGHT_FACTORS[p.profile.split(' - ')[0]] || 10;
+      const weight = (p.length / 1000) * weightPerM;
       const totalWeight = weight * p.quantity;
       return { ...p, weight, totalWeight };
     }).filter(p => p.profile.toLowerCase().includes(search.toLowerCase()) || p.id.toLowerCase().includes(search.toLowerCase()));
+    
     filtered.sort((a, b) => {
       let valA = (a as any)[sortCol];
       let valB = (b as any)[sortCol];
@@ -35,7 +52,7 @@ export const BOMTable: React.FC = () => {
       return 0;
     });
     return filtered;
-  }, [parts, search, sortCol, sortAsc]);
+  }, [entities, search, sortCol, sortAsc]);
 
   const toggleSort = (col: string) => {
     if (sortCol === col) setSortAsc(!sortAsc);

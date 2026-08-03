@@ -41,7 +41,7 @@ const defaultLayout = {
         ]
       },
       {
-        type: "column",
+        type: "row",
         weight: 60,
         children: [
           {

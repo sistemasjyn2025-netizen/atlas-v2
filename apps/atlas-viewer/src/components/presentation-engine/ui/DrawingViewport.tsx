@@ -34,7 +34,7 @@ export const DrawingViewport: React.FC<DrawingViewportProps> = ({
                 width: '100%',
                 height: '100%',
                 overflow: 'hidden',
-                backgroundColor: 'var(--surface-sunken, #e5e5e5)', // Typical CAD background
+                backgroundColor: '#0a192f', // Technical Blueprint background
                 cursor: 'crosshair',
                 touchAction: 'none'
             }}

@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { ProjectWizard } from './ProjectWizard';
 import { WizardBackground } from './WizardBackground';
 import { CatalogProvider } from './CatalogContext';
-import { Clock, MapPin, Target, FolderOpen } from 'lucide-react';
+import { Clock, MapPin, Target, FolderOpen, Settings } from 'lucide-react';
 import { SignedIn, SignedOut, SignInButton, UserButton, useAuth } from '@clerk/clerk-react';
 import { getProjects } from '../../services/api';
+import { CompanySettingsModal } from '../workspace/CompanySettingsModal';
 
 interface RecentProject {
   id: string;
@@ -17,6 +18,7 @@ interface RecentProject {
 export const StartScreen: React.FC<{ onProjectCreated: (data: any) => void }> = ({ onProjectCreated }) => {
   const [mode, setMode] = useState<'menu' | 'wizard'>('menu');
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([]);
+  const [showSettings, setShowSettings] = useState(false);
 
   const { getToken } = useAuth();
 
@@ -92,7 +94,7 @@ export const StartScreen: React.FC<{ onProjectCreated: (data: any) => void }> = 
     }}>
       <WizardBackground />
       
-      <div style={{ position: 'absolute', top: 20, right: 40, zIndex: 100 }}>
+      <div style={{ position: 'absolute', top: 20, right: 40, zIndex: 100, display: 'flex', alignItems: 'center', gap: 16 }}>
         <SignedOut>
           <SignInButton mode="modal">
             <button style={{ padding: '8px 16px', background: 'transparent', color: '#c9d1d9', border: '1px solid #30363d', borderRadius: 6, cursor: 'pointer', transition: 'all 0.2s' }}
@@ -103,9 +105,20 @@ export const StartScreen: React.FC<{ onProjectCreated: (data: any) => void }> = 
           </SignInButton>
         </SignedOut>
         <SignedIn>
+          <button 
+            onClick={() => setShowSettings(true)}
+            title="Configuración de Empresa"
+            style={{ background: 'transparent', border: 'none', color: '#8b949e', cursor: 'pointer', padding: 8, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = '#fff'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8b949e'; }}
+          >
+            <Settings size={20} />
+          </button>
           <UserButton />
         </SignedIn>
       </div>
+
+      {showSettings && <CompanySettingsModal onClose={() => setShowSettings(false)} />}
 
       <div style={{ position: 'relative', zIndex: 10, flex: 1, display: 'flex', flexDirection: 'column', padding: '60px 100px', width: '100%', maxWidth: 1200, alignItems: 'center' }}>
         

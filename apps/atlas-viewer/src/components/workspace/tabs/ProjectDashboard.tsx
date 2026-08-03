@@ -2,8 +2,11 @@ import React from 'react';
 import { usePipelineContext } from '../../../contexts/PipelineContext';
 import toast from 'react-hot-toast';
 
+import { useProjectStore } from '../../../store/useProjectStore';
+
 export const ProjectDashboard: React.FC = () => {
   const { pipelineResult } = usePipelineContext();
+  const { projectInput, entities } = useProjectStore();
 
   if (!pipelineResult) {
     return <div style={{ padding: 20, color: '#8b949e', fontFamily: 'Inter' }}>No hay resultados disponibles en el sistema.</div>;
@@ -29,6 +32,16 @@ export const ProjectDashboard: React.FC = () => {
   const costMat = quote?.totalMaterialCost || 0;
   const costFab = quote?.totalOperationCost || 0;
   const costTotal = quote?.grandTotal || 0;
+
+  // Calculate live weight based on store
+  const WEIGHT_FACTORS: Record<string, number> = { 'Column': 35, 'Beam': 35, 'Purlin': 5, 'Bracing': 2 };
+  let calcTotalWeight = 0;
+  entities.forEach((e: any) => {
+    const weightPerM = WEIGHT_FACTORS[e.type] || 10;
+    calcTotalWeight += (e.length / 1000) * weightPerM;
+  });
+  const pricePerKg = projectInput.pricePerKg || 0;
+  const calculatedCost = calcTotalWeight * pricePerKg;
 
   return (
     <div style={{ padding: 20, color: '#c9d1d9', fontFamily: 'Inter, sans-serif', height: '100%', overflowY: 'auto' }}>
@@ -58,7 +71,9 @@ export const ProjectDashboard: React.FC = () => {
           <h3 style={{ fontSize: 14, color: '#8b949e', marginTop: 0 }}>Costo Estimado</h3>
           <p style={{ margin: '4px 0' }}>Materiales: <strong>USD {costMat.toFixed(2)}</strong></p>
           <p style={{ margin: '4px 0' }}>Fabricación: <strong>USD {costFab.toFixed(2)}</strong></p>
-          <p style={{ margin: '4px 0' }}>Total: <strong style={{ color: '#3fb950' }}>USD {costTotal.toFixed(2)}</strong></p>
+          <div style={{ margin: '8px 0', borderTop: '1px solid #30363d' }}></div>
+          <p style={{ margin: '4px 0', fontSize: '11px', color: '#8b949e' }}>Acero: {(calcTotalWeight / 1000).toFixed(2)}t @ ${pricePerKg}/kg</p>
+          <p style={{ margin: '4px 0' }}>Presupuesto Estructural: <strong style={{ color: '#3fb950' }}>USD {calculatedCost.toFixed(2)}</strong></p>
         </div>
         
         {/* Deliverables */}

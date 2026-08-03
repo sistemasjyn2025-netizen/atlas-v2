@@ -12,11 +12,27 @@ interface WizardData {
   width: number;
   length: number;
   height: number;
-  baySpacing: number;
-  roofSlope: number;
+  frameSpacing: number;
+  roofPitch: number;
+  purlinSpacing: number;
+  roofType: string;
+  structureType: string;
   mainProfileId: string;
   materialId: string;
 }
+
+const profileOptions = [
+  { value: 'ipe', label: 'Perfil IPE/W (Alma Llena)' },
+  { value: 'c-profile', label: 'Perfil C / UPN' },
+  { value: 'hss', label: 'Tubo Estructural Rectangular' },
+  { value: 'truss', label: 'Reticulado (Celosía)' }
+];
+
+const materialOptions = [
+  { value: 'a36', label: 'Acero Estándar (ASTM A36 / F-24)' },
+  { value: 'a572', label: 'Acero Alta Resistencia (A572 Gr. 50)' },
+  { value: 'galvanized', label: 'Acero Galvanizado' }
+];
 
 export const ProjectWizard: React.FC<{ onComplete: (data: any) => void }> = ({ onComplete }) => {
   const [step, setStep] = useState(1);
@@ -29,18 +45,18 @@ export const ProjectWizard: React.FC<{ onComplete: (data: any) => void }> = ({ o
     width: 50000,
     length: 70000,
     height: 8000,
-    baySpacing: 6000,
-    roofSlope: 0.15,
-    mainProfileId: 'IPE400',
-    materialId: 'S355'
+    frameSpacing: 6000,
+    roofPitch: 15,
+    purlinSpacing: 1000,
+    roofType: 'dos-aguas',
+    structureType: 'alma-llena',
+    mainProfileId: 'ipe',
+    materialId: 'a36'
   });
 
   if (loading) {
     return <div style={{ color: 'white', padding: 40, fontFamily: 'Inter, sans-serif' }}>Initializing ATLAS Platform...</div>;
   }
-
-  const profiles = engine?.cache.getCategoryList(CatalogCategory.StructuralProfile) || [];
-  const materials = engine?.cache.getCategoryList(CatalogCategory.Material) || [];
 
   const updateData = (partial: Partial<WizardData>) => setData(prev => ({ ...prev, ...partial }));
 
@@ -74,7 +90,9 @@ export const ProjectWizard: React.FC<{ onComplete: (data: any) => void }> = ({ o
             padding: 40, 
             width: 600,
             boxShadow: '0 24px 48px rgba(0,0,0,0.5)',
-            backdropFilter: 'blur(10px)'
+            backdropFilter: 'blur(10px)',
+            maxHeight: '80vh',
+            overflowY: 'auto'
           }}>
             {step === 1 && (
               <Step1 data={data} update={updateData} next={() => setStep(2)} />
@@ -83,7 +101,7 @@ export const ProjectWizard: React.FC<{ onComplete: (data: any) => void }> = ({ o
               <Step2 data={data} update={updateData} back={() => setStep(1)} next={() => setStep(3)} />
             )}
             {step === 3 && (
-              <Step3 data={data} update={updateData} profiles={profiles} materials={materials} back={() => setStep(2)} next={() => setStep(4)} />
+              <Step3 data={data} update={updateData} back={() => setStep(2)} next={() => setStep(4)} />
             )}
             {step === 4 && (
               <Step4 data={data} back={() => setStep(3)} generate={() => setStep(5)} />
@@ -139,9 +157,27 @@ const Step1 = ({ data, update, next }: any) => (
 const Step2 = ({ data, update, back, next }: any) => (
   <div>
     <h2 style={{ color: '#fff', marginTop: 0 }}>2. Geometría</h2>
+    
     <div style={{ display: 'flex', gap: 16 }}>
       <div style={{ flex: 1 }}>
-        <label>Ancho (mm)</label>
+        <label>Tipo de Estructura</label>
+        <select style={InputStyle} value={data.structureType} onChange={e => update({ structureType: e.target.value })}>
+          <option value="alma-llena">Alma Llena</option>
+          <option value="reticulado">Reticulado (Celosía)</option>
+        </select>
+      </div>
+      <div style={{ flex: 1 }}>
+        <label>Tipo de Techo</label>
+        <select style={InputStyle} value={data.roofType} onChange={e => update({ roofType: e.target.value })}>
+          <option value="dos-aguas">A Dos Aguas</option>
+          <option value="un-agua">A Un Agua</option>
+        </select>
+      </div>
+    </div>
+
+    <div style={{ display: 'flex', gap: 16 }}>
+      <div style={{ flex: 1 }}>
+        <label>Ancho (Luz Libre) (mm)</label>
         <input type="number" style={InputStyle} value={data.width} onChange={e => update({ width: Number(e.target.value) })} />
       </div>
       <div style={{ flex: 1 }}>
@@ -156,11 +192,20 @@ const Step2 = ({ data, update, back, next }: any) => (
       </div>
       <div style={{ flex: 1 }}>
         <label>Separación de Pórticos (mm)</label>
-        <input type="number" style={InputStyle} value={data.baySpacing} onChange={e => update({ baySpacing: Number(e.target.value) })} />
+        <input type="number" style={InputStyle} value={data.frameSpacing} onChange={e => update({ frameSpacing: Number(e.target.value) })} />
       </div>
     </div>
-    <label>Pendiente de Cubierta</label>
-    <input type="number" step="0.01" style={InputStyle} value={data.roofSlope} onChange={e => update({ roofSlope: Number(e.target.value) })} />
+    
+    <div style={{ display: 'flex', gap: 16 }}>
+      <div style={{ flex: 1 }}>
+        <label>Pendiente de Cubierta (%)</label>
+        <input type="number" style={InputStyle} value={data.roofPitch} onChange={e => update({ roofPitch: Number(e.target.value) })} />
+      </div>
+      <div style={{ flex: 1 }}>
+        <label>Separación de Correas (mm)</label>
+        <input type="number" style={InputStyle} value={data.purlinSpacing} onChange={e => update({ purlinSpacing: Number(e.target.value) })} />
+      </div>
+    </div>
     
     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
       <button style={GhostButtonStyle} onClick={back}>Atrás</button>
@@ -169,17 +214,17 @@ const Step2 = ({ data, update, back, next }: any) => (
   </div>
 );
 
-const Step3 = ({ data, update, profiles, materials, back, next }: any) => (
+const Step3 = ({ data, update, back, next }: any) => (
   <div>
     <h2 style={{ color: '#fff', marginTop: 0 }}>3. Ingeniería</h2>
     <label>Perfil Principal</label>
     <select style={InputStyle} value={data.mainProfileId} onChange={e => update({ mainProfileId: e.target.value })}>
-      {profiles.map((p: any) => <option key={p.id} value={p.code}>{p.name} - {p.description}</option>)}
+      {profileOptions.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
     </select>
     
     <label>Material</label>
     <select style={InputStyle} value={data.materialId} onChange={e => update({ materialId: e.target.value })}>
-      {materials.map((m: any) => <option key={m.id} value={m.code}>{m.name} - {m.description}</option>)}
+      {materialOptions.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
     </select>
     
     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
@@ -189,19 +234,24 @@ const Step3 = ({ data, update, profiles, materials, back, next }: any) => (
   </div>
 );
 
-const Step4 = ({ data, back, generate }: any) => (
-  <div>
-    <h2 style={{ color: '#fff', marginTop: 0 }}>4. Resumen</h2>
-    <div style={{ background: '#0d1117', padding: 20, borderRadius: 6, border: '1px solid #30363d', marginBottom: 24 }}>
-      <p style={{ margin: '0 0 8px 0' }}><strong>Proyecto:</strong> {data.projectName} ({data.clientName})</p>
-      <p style={{ margin: '0 0 8px 0' }}><strong>Ubicación:</strong> {data.location} | Normativa: {data.buildingCode}</p>
-      <p style={{ margin: '0 0 8px 0' }}><strong>Geometría:</strong> {data.width}x{data.length} mm, H={data.height} mm</p>
-      <p style={{ margin: '0 0 8px 0' }}><strong>Estructura:</strong> {data.mainProfileId} en {data.materialId}</p>
+const Step4 = ({ data, back, generate }: any) => {
+  const profileLabel = profileOptions.find(p => p.value === data.mainProfileId)?.label || data.mainProfileId;
+  const materialLabel = materialOptions.find(m => m.value === data.materialId)?.label || data.materialId;
+
+  return (
+    <div>
+      <h2 style={{ color: '#fff', marginTop: 0 }}>4. Resumen</h2>
+      <div style={{ background: '#0d1117', padding: 20, borderRadius: 6, border: '1px solid #30363d', marginBottom: 24 }}>
+        <p style={{ margin: '0 0 8px 0' }}><strong>Proyecto:</strong> {data.projectName} ({data.clientName})</p>
+        <p style={{ margin: '0 0 8px 0' }}><strong>Geometría:</strong> {data.width}x{data.length} mm, H={data.height} mm</p>
+        <p style={{ margin: '0 0 8px 0' }}><strong>Estructura:</strong> {data.structureType === 'reticulado' ? 'Reticulado' : 'Alma Llena'} | {data.roofType === 'un-agua' ? 'Un Agua' : 'Dos Aguas'}</p>
+        <p style={{ margin: '0 0 8px 0' }}><strong>Material:</strong> {profileLabel} en {materialLabel}</p>
+      </div>
+      
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
+        <button style={GhostButtonStyle} onClick={back}>Atrás</button>
+        <button style={{ ...ButtonStyle, background: '#1f6feb' }} onClick={generate}>GENERAR</button>
+      </div>
     </div>
-    
-    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 24 }}>
-      <button style={GhostButtonStyle} onClick={back}>Atrás</button>
-      <button style={{ ...ButtonStyle, background: '#1f6feb' }} onClick={generate}>GENERAR</button>
-    </div>
-  </div>
-);
+  );
+};
